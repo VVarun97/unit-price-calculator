@@ -74,10 +74,20 @@ h1 {
   gap: 2rem;
 }
 
-.input-section, .results-section {
+.input-section {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .card {
@@ -140,10 +150,12 @@ input {
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 input:focus {
@@ -154,6 +166,27 @@ input:focus {
 
 input::placeholder {
   color: rgba(148, 163, 184, 0.5);
+}
+
+.clear-input-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 5;
+}
+
+.clear-input-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
 }
 
 .custom-select-wrapper {

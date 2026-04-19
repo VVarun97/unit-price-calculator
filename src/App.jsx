@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Calculator, Tag, Weight, CheckCircle2, DollarSign, ChevronDown } from 'lucide-react';
+import { Plus, Trash2, Calculator, Tag, Weight, CheckCircle2, IndianRupee, ChevronDown, X } from 'lucide-react';
 
 function App() {
   const [items, setItems] = useState(() => {
@@ -20,8 +20,6 @@ function App() {
     { value: 'ea', label: 'each (pc)' },
     { value: 'kg', label: 'kg' },
     { value: 'g', label: 'g' },
-    { value: 'lb', label: 'lb' },
-    { value: 'oz', label: 'oz' },
     { value: 'l', label: 'L' },
     { value: 'ml', label: 'ml' }
   ];
@@ -50,7 +48,6 @@ function App() {
 
     if (form.unit === 'g') { stdQty = quantity / 1000; stdUnit = 'kg'; }
     if (form.unit === 'ml') { stdQty = quantity / 1000; stdUnit = 'l'; }
-    if (form.unit === 'oz') { stdQty = quantity / 16; stdUnit = 'lb'; }
 
     const unitPrice = price / stdQty;
 
@@ -68,8 +65,7 @@ function App() {
     setForm({
       ...form,
       price: '',
-      quantity: '',
-      name: ''
+      quantity: ''
     });
   };
 
@@ -115,15 +111,26 @@ function App() {
                     name="name"
                     value={form.name}
                     onChange={handleInputChange}
-                    placeholder="e.g. Brand A Coffee"
+                    placeholder="e.g. Aashirvaad Atta"
+                    style={{ paddingRight: form.name ? '2.5rem' : '1rem' }}
                   />
+                  {form.name && (
+                    <button 
+                      type="button" 
+                      className="clear-input-btn"
+                      onClick={() => setForm(prev => ({ ...prev, name: '' }))}
+                      title="Clear name"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
 
               <div className="form-group">
                 <label>Price</label>
                 <div className="input-wrapper">
-                  <DollarSign className="input-icon" size={18} />
+                  <IndianRupee className="input-icon" size={18} />
                   <input
                     type="number"
                     step="0.01"
@@ -137,55 +144,64 @@ function App() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Quantity & Unit</label>
-                <div className="input-wrapper">
-                  <Weight className="input-icon" size={18} />
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    name="quantity"
-                    value={form.quantity}
-                    onChange={handleInputChange}
-                    placeholder="1"
-                    required
-                    style={{ paddingRight: '6.5rem' }}
-                  />
-                  <div 
-                    className="custom-select-wrapper" 
-                    tabIndex={0} 
-                    onBlur={(e) => {
-                      if (!e.currentTarget.contains(e.relatedTarget)) {
-                        setUnitDropdownOpen(false);
-                      }
-                    }}
-                  >
-                    <button 
-                      type="button" 
-                      className="custom-select-trigger" 
-                      onClick={() => setUnitDropdownOpen(!unitDropdownOpen)}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-group">
+                  <label>Quantity</label>
+                  <div className="input-wrapper">
+                    <Weight className="input-icon" size={18} />
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      name="quantity"
+                      value={form.quantity}
+                      onChange={handleInputChange}
+                      placeholder="1"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Unit</label>
+                  <div className="input-wrapper">
+                    <div 
+                      className="custom-select-wrapper" 
+                      style={{ position: 'relative', width: '100%', right: 'auto' }}
+                      tabIndex={0} 
+                      onBlur={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget)) {
+                          setUnitDropdownOpen(false);
+                        }
+                      }}
                     >
-                      {unitOptions.find(o => o.value === form.unit)?.label}
-                      <ChevronDown size={14} />
-                    </button>
-                    {unitDropdownOpen && (
-                      <div className="custom-select-dropdown">
-                        {unitOptions.map(option => (
-                          <button
-                            key={option.value}
-                            type="button"
-                            className={`custom-select-option ${form.unit === option.value ? 'selected' : ''}`}
-                            onClick={() => {
-                              setForm(prev => ({...prev, unit: option.value}));
-                              setUnitDropdownOpen(false);
-                            }}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                      <button 
+                        type="button" 
+                        className="custom-select-trigger" 
+                        onClick={() => setUnitDropdownOpen(!unitDropdownOpen)}
+                        style={{ width: '100%', padding: '0.875rem 1rem', borderRadius: '12px', justifyContent: 'space-between', fontSize: '1rem', background: 'rgba(15, 23, 42, 0.5)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', height: '100%' }}
+                      >
+                        <span style={{flex: 1, textAlign: 'left'}}>{unitOptions.find(o => o.value === form.unit)?.label}</span>
+                        <ChevronDown size={18} style={{ color: 'var(--text-secondary)' }} />
+                      </button>
+                      {unitDropdownOpen && (
+                        <div className="custom-select-dropdown" style={{ width: '100%' }}>
+                          {unitOptions.map(option => (
+                            <button
+                              key={option.value}
+                              type="button"
+                              className={`custom-select-option ${form.unit === option.value ? 'selected' : ''}`}
+                              onClick={() => {
+                                setForm(prev => ({...prev, unit: option.value}));
+                                setUnitDropdownOpen(false);
+                              }}
+                            >
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,12 +234,12 @@ function App() {
                     <div className="item-info">
                       <div className="item-title">{item.name || `Option ${index + 1}`}</div>
                       <div className="item-details">
-                        ${item.price.toFixed(2)} for {item.quantity}{item.unit}
+                        ₹{item.price.toFixed(2)} for {item.quantity}{item.unit}
                       </div>
                     </div>
                     <div className="item-price-view">
                       <div className="unit-price">
-                        ${item.unitPrice.toFixed(3)} <span>/{item.stdUnit}</span>
+                        ₹{item.unitPrice.toFixed(3)} <span>/{item.stdUnit}</span>
                       </div>
                     </div>
                     
